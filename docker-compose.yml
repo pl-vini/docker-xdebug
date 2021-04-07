@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    container_name: php74
+    env_file:
+      - ./docker/.docker.env
+    depends_on: 
+      - mysql
+    volumes: 
+      - ./app:/var/www/html/
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+    ports: 
+      - 8080:80
+  mysql:
+    container_name: mysql8
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    # restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+      MYSQL_USER: mg
+      MYSQL_PASSWORD: mg
+    ports: 
+      - 666:3306  
+    volumes: 
+      - ./mysql:/var/lib/mysql
